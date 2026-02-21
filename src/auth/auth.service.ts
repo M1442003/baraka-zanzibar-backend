@@ -13,7 +13,13 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto) {
+    console.log('Register DTO received:', registerDto);
     const { email, password, name } = registerDto;
+    console.log('Extracted fields:', { email, password, name });
+
+    if (!email || !password || !name) {
+      throw new Error(`Missing fields: ${!email ? 'email ' : ''}${!password ? 'password ' : ''}${!name ? 'name' : ''}`);
+    }
 
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
@@ -51,7 +57,12 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
+    console.log('Login DTO received:', loginDto);
     const { email, password } = loginDto;
+
+    if (!email || !password) {
+      throw new Error(`Missing fields: ${!email ? 'email ' : ''}${!password ? 'password' : ''}`);
+    }
 
     const user = await this.prisma.user.findUnique({
       where: { email },
